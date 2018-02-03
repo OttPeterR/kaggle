@@ -49,7 +49,6 @@ def train_model(X, Y):
     model.compile(loss='binary_crossentropy',
                   optimizer='adam', metrics=['accuracy'])
 
-    model.fit(X, Y, epochs=50, batch_size=100)
     model.fit(X, Y, epochs=30, batch_size=4)
     return model
 
