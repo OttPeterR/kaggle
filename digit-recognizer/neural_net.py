@@ -35,8 +35,24 @@ def reduce_prediction_data(y):
     return y.argmax(1)
 
 
-def sigmoid(val):
-    return 1.0 / (1.0 + (np.exp(-val)))
+def prepare_date_for_submission(y, filename='submission.csv'):
+    # takes y as [value0, value1, value2, ...]
+    # outputs as:
+    # ImageId,Label
+    # 1,value0
+    # 2,value1
+    # 3,value2
+    sub_data = np.zeros([y.shape[0], 2])
+    count = 0
+    for val in y:
+        sub_data[count] = [count + 1, val]
+        count += 1
+    sub_data = sub_data.astype(int)
+    np.savetxt(fname=filename,
+               X=sub_data,
+               fmt='%1.0i',
+               delimiter=',',
+               header='ImageId,Label')
 
 
 def train_model(X, Y):
@@ -49,7 +65,7 @@ def train_model(X, Y):
     model.compile(loss='binary_crossentropy',
                   optimizer='adam', metrics=['accuracy'])
 
-    model.fit(X, Y, epochs=30, batch_size=4)
+    model.fit(X, Y, epochs=100, batch_size=8)
     return model
 
 
@@ -74,11 +90,11 @@ if __name__ == '__main__':
     print(scores)
 
     # predicting
-    run_prediction = False
+    run_prediction = True
     if run_prediction:
         test_data = get_test_data()
-        predictions = predict(model, train_X)
+        predictions = predict(model, test_data)
         predictions = reduce_prediction_data(predictions)
-        np.set_printoptions(threshold=np.nan)
-        print("Predictions:    " + str(predictions))
-        print("Correct Values: " + str(train_Y))
+        prepare_date_for_submission(predictions)
+        # np.set_printoptions(threshold=np.nan)
+        print('Complete')
