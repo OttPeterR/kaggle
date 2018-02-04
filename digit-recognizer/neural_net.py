@@ -37,8 +37,8 @@ def reduce_prediction_data(y):
 
 def prepare_date_for_submission(y, filename='submission.csv'):
     # takes y as [value0, value1, value2, ...]
-    # outputs as:
-    # ImageId,Label
+    # outputs as: (yes, the # is included in the first line)
+    # # ImageId,Label
     # 1,value0
     # 2,value1
     # 3,value2
@@ -50,7 +50,7 @@ def prepare_date_for_submission(y, filename='submission.csv'):
     sub_data = sub_data.astype(int)
     np.savetxt(fname=filename,
                X=sub_data,
-               fmt='%1.0i',
+               fmt='%i',
                delimiter=',',
                header='ImageId,Label')
 
@@ -58,14 +58,16 @@ def prepare_date_for_submission(y, filename='submission.csv'):
 def train_model(X, Y):
 
     model = Sequential()
-    model.add(Dense(12, input_dim=784, activation='relu'))
-    model.add(Dense(8, activation='relu'))
+    model.add(Dense(400, input_dim=784, activation='relu'))
+    model.add(Dense(200, activation='relu'))
+    model.add(Dense(100, activation='relu'))
+    model.add(Dense(50, activation='relu'))
     model.add(Dense(10, activation='sigmoid'))
 
     model.compile(loss='binary_crossentropy',
                   optimizer='adam', metrics=['accuracy'])
 
-    model.fit(X, Y, epochs=100, batch_size=8)
+    model.fit(X, Y, epochs=10, batch_size=16)
     return model
 
 
