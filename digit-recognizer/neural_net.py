@@ -60,17 +60,17 @@ def prepare_date_for_submission(y, filename='submission.csv'):
 def train_model(X, Y):
 
     model = Sequential()
-    model.add(Dense(350, input_dim=784, activation='relu'))
-    model.add(Dense(350, activation='relu'))
+    model.add(Dense(450, input_dim=784, activation='relu'))
+    model.add(Dense(300, activation='relu'))
     model.add(Dense(300, activation='sigmoid'))
-    model.add(Dense(200, activation='relu'))
-    model.add(Dense(100, activation='relu'))
+    model.add(Dense(150, activation='relu'))
+    model.add(Dense(50, activation='relu'))
     model.add(Dense(10, activation='sigmoid'))
 
     model.compile(loss='binary_crossentropy',
                   optimizer='adam', metrics=['accuracy'])
 
-    model.fit(X, Y, epochs=500, batch_size=4)
+    model.fit(X, Y, epochs=500, batch_size=4200)
     return model
 
 
