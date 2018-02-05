@@ -54,6 +54,7 @@ def prepare_date_for_submission(y, filename='submission.csv'):
                X=sub_data,
                fmt='%i',
                delimiter=',',
+               comments='',
                header='ImageId,Label')
 
 
