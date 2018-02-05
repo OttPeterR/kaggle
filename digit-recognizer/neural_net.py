@@ -84,6 +84,13 @@ def predict(model, X):
 
 if __name__ == '__main__':
     np.random.seed(0)
+    
+    # Use GPU?
+    if True:
+        config = tf.ConfigProto( device_count = {'GPU': 1 , 'CPU': 4} ) 
+        sess = tf.Session(config=config) 
+        keras.backend.set_session(sess)
+
 
     # training
     train_X, train_Y = get_train_data()
