@@ -1,8 +1,11 @@
 import numpy as np
 import tensorflow as tf
 import keras
-from keras.layers import Dense
+from keras.layers import Dense, Conv2D, MaxPooling2D, Dropout, Flatten
+from keras.layers.core import Reshape
 from keras.models import Sequential
+from keras.optimizers import SGD
+
 
 
 def get_data(file, delimiter=','):
@@ -60,18 +63,38 @@ def prepare_date_for_submission(y, filename='submission.csv'):
 
 def train_model(X, Y):
 
+    input_shape = (28, 28, 1)
+
     model = Sequential()
-    model.add(Dense(450, input_dim=784, activation='relu'))
-    model.add(Dense(400, activation='relu'))
-    model.add(Dense(300, activation='relu'))
-    model.add(Dense(300, activation='relu'))
-    model.add(Dense(300, activation='relu'))
-    model.add(Dense(10, activation='sigmoid'))
+    model.add(Reshape(input_shape, input_shape=(X.shape[1],)))
 
-    model.compile(loss='binary_crossentropy',
-                  optimizer='adam', metrics=['accuracy'])
+    model.add(Conv2D(32, (3, 3), activation='relu', input_shape=input_shape))
+    model.add(Conv2D(32, (3, 3), activation='relu'))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    # model.add(Dropout(0.25))
 
-    model.fit(X, Y, epochs=500, batch_size=4200)
+    model.add(Conv2D(64, (3, 3), activation='relu'))
+    model.add(Conv2D(64, (3, 3), activation='relu'))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    # model.add(Dropout(0.25))
+
+
+    model.add(Flatten())
+    model.add(Dense(256, activation='relu'))
+    model.add(Dense(256, activation='relu'))
+    model.add(Dense(256, activation='relu'))
+    # model.add(Dropout(0.5))
+
+    model.add(Dense(10, activation='softmax'))
+
+    sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
+    model.compile(loss='categorical_crossentropy',
+                  optimizer=sgd, metrics=['accuracy'])
+
+    num_batches = 10
+    batch_size = int(X.shape[0]/num_batches)
+    epochs = 150
+    model.fit(X, Y, epochs=epochs, batch_size=batch_size)
     return model
 
 
